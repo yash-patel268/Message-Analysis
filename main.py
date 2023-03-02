@@ -1,4 +1,12 @@
 import re
+from transformers import RobertaTokenizerFast, TFRobertaForSequenceClassification, pipeline
+import os
+
+tokenizer = RobertaTokenizerFast.from_pretrained("arpanghoshal/EmoRoBERTa")
+model = TFRobertaForSequenceClassification.from_pretrained("arpanghoshal/EmoRoBERTa")
+emotion = pipeline('sentiment-analysis', model='arpanghoshal/EmoRoBERTa')
+
+os.system('cls')
 
 print("Hello user, this is the message analysis program which will be used to find phisihing within emails and text messages.\n")
 print("For this instance of this application which type of message will be analyzed, text message or emai?\n")
@@ -8,6 +16,7 @@ input_type = ""
 user_email = ""
 user_text = ""
 user_message_content = ""
+message_emotion = ""
 
 while input_checker == 0:
     print("Write 'text' or 'email'.")
@@ -70,4 +79,25 @@ while input_checker == 0:
         
     if input_checker == 1:
             input_checker = 0
-            break
+            break  
+
+emotion_labels = emotion(user_message_content)
+emotion_output = emotion_labels[0]
+emotion_type = emotion_output.get('label')
+
+happy_words = ["admiration", "amusement", "approval", "caring", "desire", "excitement", "gratitude", "joy", "love", "optimism", "pride", "relief"]
+depression_words = ["grief", "remorse", "sadness"]
+anger_words = ["anger", "annoyance", "dissapointment", "dissaproval", "digust"]
+anxiety_words = ["embrassment", "fear", "nervousness"]
+
+
+if emotion_type in happy_words:
+    message_emotion = "happy"
+elif emotion_type in depression_words:
+    message_emotion = "depression"
+elif emotion_type in anger_words:
+    message_emotion = "anger"
+elif emotion_type in anxiety_words:
+    message_emotion = "anxiety"
+else:
+    message_emotion = "neutral"
