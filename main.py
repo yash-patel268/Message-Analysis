@@ -1,10 +1,17 @@
 import re
 from transformers import RobertaTokenizerFast, TFRobertaForSequenceClassification, pipeline
 import os
+import json
 
 tokenizer = RobertaTokenizerFast.from_pretrained("arpanghoshal/EmoRoBERTa")
 model = TFRobertaForSequenceClassification.from_pretrained("arpanghoshal/EmoRoBERTa")
 emotion = pipeline('sentiment-analysis', model='arpanghoshal/EmoRoBERTa')
+
+with open("email_domains.json", "r") as f:
+    common_emails = json.load(f)
+    
+with open("phonenumber_area_codes.json", "r") as f:
+    canada_phonenumbers = json.load(f)
 
 os.system('cls')
 
@@ -14,7 +21,9 @@ print("For this instance of this application which type of message will be analy
 input_checker = 0
 input_type = ""
 user_email = ""
+common_domain = False
 user_text = ""
+common_area_code = False
 user_message_content = ""
 message_emotion = ""
 
@@ -46,8 +55,7 @@ if input_type == 'email':
         if input_checker == 1:
             input_checker = 0
             break
-        
-if input_type == 'text':
+else:
     while input_checker == 0:
         print("Write the phone number of sender")
         user_text = input("Enter the phone number: ")
@@ -66,7 +74,7 @@ if input_type == 'text':
 while input_checker == 0:
     print("Write or copy/paste the message content.")
     user_message_content = input("Enter message now: ")
-    print("The message entered is: " + user_message_content)
+    print("\nThe message entered is: " + user_message_content)
     
     print("Is the message correct enter 'y' or 'n' ")
     verified_message = input("Enter your decision: ")
@@ -90,7 +98,6 @@ depression_words = ["grief", "remorse", "sadness"]
 anger_words = ["anger", "annoyance", "dissapointment", "dissaproval", "digust"]
 anxiety_words = ["embrassment", "fear", "nervousness"]
 
-
 if emotion_type in happy_words:
     message_emotion = "happy"
 elif emotion_type in depression_words:
@@ -101,3 +108,28 @@ elif emotion_type in anxiety_words:
     message_emotion = "anxiety"
 else:
     message_emotion = "neutral"
+    
+print("Emotion detected is: " + message_emotion)
+
+if input_type == 'email':
+    for item in common_emails:
+        if item in user_email:
+            input_checker = 1
+    
+    if input_checker == 1:
+        print("Entered email has common domain.")
+        common_domain = True
+    else: 
+        print("Entered email doesn't have common domain.")
+        common_domain = False
+else:
+    for item in canada_phonenumbers:
+        if item in user_text[:3]:
+            input_checker = 1
+            
+    if input_checker == 1:
+        print("Entered phone number is part of the area codes in Canada.")
+        common_domain = True
+    else: 
+        print("Entered phone number isn't part of the area codes in Canada.")
+        common_domain = False
