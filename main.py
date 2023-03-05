@@ -12,6 +12,11 @@ with open("email_domains.json", "r") as f:
     
 with open("phonenumber_area_codes.json", "r") as f:
     canada_phonenumbers = json.load(f)
+    
+happy_words = ["admiration", "amusement", "approval", "caring", "desire", "excitement", "gratitude", "joy", "love", "optimism", "pride", "relief"]
+depression_words = ["grief", "remorse", "sadness"]
+anger_words = ["anger", "annoyance", "dissapointment", "dissaproval", "digust"]
+anxiety_words = ["embrassment", "fear", "nervousness"]
 
 os.system('cls')
 
@@ -20,11 +25,13 @@ print("For this instance of this application which type of message will be analy
 
 input_checker = 0
 input_type = ""
+user_email_subject_line = ""
 user_email = ""
 common_domain = False
 user_text = ""
 common_area_code = False
 user_message_content = ""
+subject_line_emotion = ""
 message_emotion = ""
 
 while input_checker == 0:
@@ -43,7 +50,7 @@ while input_checker == 0:
 
 if input_type == 'email':
     while input_checker == 0:
-        print("Write the email of sender")
+        print("Write the email of sender.")
         user_email = input("Enter the email: ")
         
         if "@" in user_email and "." in user_email:
@@ -70,6 +77,26 @@ else:
         if input_checker == 1:
             input_checker = 0
             break
+      
+if input_type == 'email':
+    while input_checker == 0:
+        print("Write the emails subject line from sender.")
+        user_email_subject_line = input("Enter subject line of email: ")
+        print("\nThe subject line entered is: " + user_email_subject_line)
+        
+        print("Is the subject line correct enter 'y' or 'n' ")
+        verified_message = input("Enter your decision: ")
+    
+        if verified_message == 'y':
+            print("You have verified the subject line content.\n")
+            input_checker = 1
+        else:
+            print("Write the subject line again.\n")
+            
+        if input_checker == 1:
+                input_checker = 0
+                verified_message = ""
+                break 
         
 while input_checker == 0:
     print("Write or copy/paste the message content.")
@@ -87,30 +114,9 @@ while input_checker == 0:
         
     if input_checker == 1:
             input_checker = 0
+            verified_message = ""
             break  
-
-emotion_labels = emotion(user_message_content)
-emotion_output = emotion_labels[0]
-emotion_type = emotion_output.get('label')
-
-happy_words = ["admiration", "amusement", "approval", "caring", "desire", "excitement", "gratitude", "joy", "love", "optimism", "pride", "relief"]
-depression_words = ["grief", "remorse", "sadness"]
-anger_words = ["anger", "annoyance", "dissapointment", "dissaproval", "digust"]
-anxiety_words = ["embrassment", "fear", "nervousness"]
-
-if emotion_type in happy_words:
-    message_emotion = "happy"
-elif emotion_type in depression_words:
-    message_emotion = "depression"
-elif emotion_type in anger_words:
-    message_emotion = "anger"
-elif emotion_type in anxiety_words:
-    message_emotion = "anxiety"
-else:
-    message_emotion = "neutral"
-    
-print("Emotion detected is: " + message_emotion)
-
+        
 if input_type == 'email':
     for item in common_emails:
         if item in user_email:
@@ -133,3 +139,38 @@ else:
     else: 
         print("Entered phone number isn't part of the area codes in Canada.")
         common_domain = False
+        
+if input_type == "email":
+    emotion_labels = emotion(user_email_subject_line)
+    emotion_output = emotion_labels[0]
+    emotion_type = emotion_output.get('label')
+
+    if emotion_type in happy_words:
+        subject_line_emotion = "happy"
+    elif emotion_type in depression_words:
+        subject_line_emotion = "depression"
+    elif emotion_type in anger_words:
+        subject_line_emotion = "anger"
+    elif emotion_type in anxiety_words:
+        subject_line_emotion = "anxiety"
+    else:
+        subject_line_emotion = "neutral"
+        
+    print("Emotion detected in subject line is: " + subject_line_emotion)
+
+emotion_labels = emotion(user_message_content)
+emotion_output = emotion_labels[0]
+emotion_type = emotion_output.get('label')
+
+if emotion_type in happy_words:
+    message_emotion = "happy"
+elif emotion_type in depression_words:
+    message_emotion = "depression"
+elif emotion_type in anger_words:
+    message_emotion = "anger"
+elif emotion_type in anxiety_words:
+    message_emotion = "anxiety"
+else:
+    message_emotion = "neutral"
+    
+print("Emotion detected in message content is: " + message_emotion)
