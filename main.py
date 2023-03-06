@@ -9,9 +9,14 @@ emotion = pipeline('sentiment-analysis', model='arpanghoshal/EmoRoBERTa')
 
 with open("email_domains.json", "r") as f:
     common_emails = json.load(f)
+common_emails = [word.lower() for word in common_emails]
     
 with open("phonenumber_area_codes.json", "r") as f:
     canada_phonenumbers = json.load(f)
+    
+with open("phishing_words.json", "r") as f:
+    common_phishing_words = json.load(f)
+common_phishing_words = [word.lower() for word in common_phishing_words]
     
 happy_words = ["admiration", "amusement", "approval", "caring", "desire", "excitement", "gratitude", "joy", "love", "optimism", "pride", "relief"]
 depression_words = ["grief", "remorse", "sadness"]
@@ -26,11 +31,13 @@ print("For this instance of this application which type of message will be analy
 input_checker = 0
 input_type = ""
 user_email_subject_line = ""
+subject_line_score = 0
 user_email = ""
 common_domain = False
 user_text = ""
 common_area_code = False
 user_message_content = ""
+message_content_score = 0
 subject_line_emotion = ""
 message_emotion = ""
 
@@ -157,6 +164,12 @@ if input_type == "email":
         subject_line_emotion = "neutral"
         
     print("Emotion detected in subject line is: " + subject_line_emotion)
+    
+    for item in common_phishing_words:
+        if item in user_email_subject_line.lower():
+            subject_line_score += 1
+    
+    print("Number of phishing words used in the subject line is: " + str(subject_line_score))
 
 emotion_labels = emotion(user_message_content)
 emotion_output = emotion_labels[0]
@@ -174,3 +187,9 @@ else:
     message_emotion = "neutral"
     
 print("Emotion detected in message content is: " + message_emotion)
+
+for item in common_phishing_words:
+        if item in user_message_content.lower():
+            message_content_score += 1
+    
+print("Number of phishing words used in the message content is: " + str(message_content_score))
