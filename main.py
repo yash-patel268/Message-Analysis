@@ -32,12 +32,14 @@ input_checker = 0
 input_type = ""
 user_email_subject_line = ""
 subject_line_score = 0
+subject_line_words = 0
 user_email = ""
 common_domain = False
 user_text = ""
 common_area_code = False
 user_message_content = ""
 message_content_score = 0
+message_content_words = 0
 subject_line_emotion = ""
 message_emotion = ""
 
@@ -170,6 +172,11 @@ if input_type == "email":
             subject_line_score += 1
     
     print("Number of phishing words used in the subject line is: " + str(subject_line_score))
+    
+    subject_line_words = user_email_subject_line.split()
+    subject_line_words = len(subject_line_words)
+    
+    print("Number of words in the subject line is: " + str(subject_line_words))
 
 emotion_labels = emotion(user_message_content)
 emotion_output = emotion_labels[0]
@@ -189,7 +196,12 @@ else:
 print("Emotion detected in message content is: " + message_emotion)
 
 for item in common_phishing_words:
-        if item in user_message_content.lower():
-            message_content_score += 1
+    if item in user_message_content.lower():
+        message_content_score += 1
     
 print("Number of phishing words used in the message content is: " + str(message_content_score))
+
+message_content_words = user_message_content.split()
+message_content_words = len(message_content_words)
+    
+print("Number of words in the subject line is: " + str(message_content_words))
