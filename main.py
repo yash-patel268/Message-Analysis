@@ -26,7 +26,7 @@ anxiety_words = ["embrassment", "fear", "nervousness"]
 os.system('cls')
 
 print("Hello user, this is the message analysis program which will be used to find phisihing within emails and text messages.\n")
-print("For this instance of this application which type of message will be analyzed, text message or emai?\n")
+print("For this instance of this application which type of message will be analyzed, text message or email?\n")
 
 input_checker = 0
 input_type = ""
@@ -74,7 +74,7 @@ if input_type == 'email':
             break
 else:
     while input_checker == 0:
-        print("Write the phone number of sender")
+        print("Write the phone number of sender in XXX-XXX-XXXX format")
         user_text = input("Enter the phone number: ")
         pattern = r"\d{3}-\d{3}-\d{4}"  
 
@@ -163,11 +163,16 @@ if input_type == "email":
         subject_line_emotion = "depression"
     elif emotion_type in anger_words:
         subject_line_emotion = "anger"
+        if common_domain == False:
+            total_phishing_score += 1
     elif emotion_type in anxiety_words:
         subject_line_emotion = "anxiety"
+        if common_domain == False:
+            total_phishing_score += 1
     else:
         subject_line_emotion = "neutral"
-        total_phishing_score += 1
+        if common_domain == False:
+            total_phishing_score += 1
         
     print("Emotion detected in subject line is: " + subject_line_emotion)
     
@@ -182,10 +187,10 @@ if input_type == "email":
     
     print("Number of words in the subject line is: " + str(subject_line_words))
     
-    if (subject_line_score/subject_line_words) < 0.35:
+    if ((subject_line_score/subject_line_words) < 0.30):
         print("The overall subject line score is within a safe range to be considered not phishing.")
     else:
-        print("No phishing attempt was detected in the subject line.")
+        print("Phishing attempt was detected in the subject line.")
         total_phishing_score += 1
 
 emotion_labels = emotion(user_message_content)
@@ -198,11 +203,16 @@ elif emotion_type in depression_words:
     message_emotion = "depression"
 elif emotion_type in anger_words:
     message_emotion = "anger"
+    if common_domain == False and common_area_code == False:
+        total_phishing_score += 1
 elif emotion_type in anxiety_words:
     message_emotion = "anxiety"
+    if common_domain == False and common_area_code == False:
+        total_phishing_score += 1
 else:
     message_emotion = "neutral"
-    total_phishing_score += 1
+    if common_domain == False and common_area_code == False:
+        total_phishing_score += 1
     
 print("Emotion detected in message content is: " + message_emotion)
 
@@ -217,15 +227,15 @@ message_content_words = len(message_content_words)
     
 print("Number of words in the subject line is: " + str(message_content_words))
 
-if (message_content_score/message_content_words) < 0.35:
+if ((message_content_score/message_content_words) < 0.30):
     print("The overall message content score is within a safe range to be considered not phishing")
 else:
     total_phishing_score += 1
-    print("No phishing attempt was detected in the message content.")
+    print("Phishing attempt was detected in the message content.")
     
 if input_type == "email":
-    total_phishing_score = (total_phishing_score/5)*100
-    print("The phishing score is: " + str(total_phishing_score))
+    total_phishing_score = round((total_phishing_score/5)*100, 2)
+    print("The phishing score is: " + str(total_phishing_score) + "%")
 else:
-    total_phishing_score = (total_phishing_score/3)*100
-    print("The phishing score is: " + str(total_phishing_score))
+    total_phishing_score = round((total_phishing_score/3)*100, 2)
+    print("The phishing score is: " + str(total_phishing_score) + "%")
