@@ -153,32 +153,32 @@ else:
         total_phishing_score += 1
         
 if input_type == "email":
+    for item in common_phishing_words:
+        if item in user_email_subject_line.lower():
+            subject_line_score += 1
+    
     emotion_labels = emotion(user_email_subject_line)
     emotion_output = emotion_labels[0]
     emotion_type = emotion_output.get('label')
-
+    
     if emotion_type in happy_words:
         subject_line_emotion = "happy"
     elif emotion_type in depression_words:
         subject_line_emotion = "depression"
     elif emotion_type in anger_words:
         subject_line_emotion = "anger"
-        if common_domain == False:
+        if subject_line_score != 0:
             total_phishing_score += 1
     elif emotion_type in anxiety_words:
         subject_line_emotion = "anxiety"
-        if common_domain == False:
+        if subject_line_score != 0:
             total_phishing_score += 1
     else:
         subject_line_emotion = "neutral"
-        if common_domain == False:
+        if subject_line_score != 0:
             total_phishing_score += 1
         
     print("Emotion detected in subject line is: " + subject_line_emotion)
-    
-    for item in common_phishing_words:
-        if item in user_email_subject_line.lower():
-            subject_line_score += 1
     
     print("Number of phishing words used in the subject line is: " + str(subject_line_score))
     
@@ -193,6 +193,10 @@ if input_type == "email":
         print("Phishing attempt was detected in the subject line.")
         total_phishing_score += 1
 
+for item in common_phishing_words:
+    if item in user_message_content.lower():
+        message_content_score += 1
+
 emotion_labels = emotion(user_message_content)
 emotion_output = emotion_labels[0]
 emotion_type = emotion_output.get('label')
@@ -203,22 +207,18 @@ elif emotion_type in depression_words:
     message_emotion = "depression"
 elif emotion_type in anger_words:
     message_emotion = "anger"
-    if common_domain == False and common_area_code == False:
+    if message_content_score != 0:
         total_phishing_score += 1
 elif emotion_type in anxiety_words:
     message_emotion = "anxiety"
-    if common_domain == False and common_area_code == False:
+    if message_content_score != 0:
         total_phishing_score += 1
 else:
     message_emotion = "neutral"
-    if common_domain == False and common_area_code == False:
+    if message_content_score != 0:
         total_phishing_score += 1
     
 print("Emotion detected in message content is: " + message_emotion)
-
-for item in common_phishing_words:
-    if item in user_message_content.lower():
-        message_content_score += 1
     
 print("Number of phishing words used in the message content is: " + str(message_content_score))
 
