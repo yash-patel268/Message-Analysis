@@ -227,7 +227,7 @@ message_content_words = len(message_content_words)
     
 print("Number of words in the subject line is: " + str(message_content_words))
 
-if ((message_content_score/message_content_words) < 0.30):
+if ((message_content_score/message_content_words) < 0.20 and message_content_score < 5):
     print("The overall message content score is within a safe range to be considered not phishing")
 else:
     total_phishing_score += 1
