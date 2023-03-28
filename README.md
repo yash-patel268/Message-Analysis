@@ -8,3 +8,6 @@ Application made for the computer security course which will analyze either emai
 - Transformers
 - OS
 - JSON
+
+## How to run
+Download the libraries using `python -m pip install requirements.txt`. Then just run the main file using `python main.py`.
